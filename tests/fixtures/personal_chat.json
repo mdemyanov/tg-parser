@@ -1,0 +1,58 @@
+{
+  "name": "Test User",
+  "type": "personal_chat",
+  "id": 123456789,
+  "messages": [
+    {
+      "id": 1,
+      "type": "message",
+      "date": "2024-01-15T10:30:00",
+      "date_unixtime": "1705315800",
+      "from": "Alice",
+      "from_id": "user111",
+      "text": "Hello!"
+    },
+    {
+      "id": 2,
+      "type": "message",
+      "date": "2024-01-15T10:31:00",
+      "date_unixtime": "1705315860",
+      "from": "Bob",
+      "from_id": "user222",
+      "text": "Hi there!"
+    },
+    {
+      "id": 3,
+      "type": "message",
+      "date": "2024-01-15T10:32:00",
+      "date_unixtime": "1705315920",
+      "from": "Alice",
+      "from_id": "user111",
+      "text": [
+        "Check this ",
+        {"type": "bold", "text": "important"},
+        " message"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "message",
+      "date": "2024-01-16T09:00:00",
+      "date_unixtime": "1705395600",
+      "from": "Bob",
+      "from_id": "user222",
+      "text": "Got it!",
+      "reply_to_message_id": 3
+    },
+    {
+      "id": 5,
+      "type": "service",
+      "date": "2024-01-16T10:00:00",
+      "date_unixtime": "1705399200",
+      "actor": "Alice",
+      "actor_id": "user111",
+      "action": "phone_call",
+      "text": ""
+    }
+  ]
+}

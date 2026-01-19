@@ -1,0 +1,82 @@
+{
+  "name": "Test Group",
+  "type": "private_supergroup",
+  "id": 987654321,
+  "messages": [
+    {
+      "id": 1,
+      "type": "service",
+      "date": "2024-01-10T12:00:00",
+      "date_unixtime": "1704888000",
+      "actor": "Admin",
+      "actor_id": "user100",
+      "action": "create_group",
+      "title": "Test Group",
+      "text": ""
+    },
+    {
+      "id": 2,
+      "type": "service",
+      "date": "2024-01-10T12:01:00",
+      "date_unixtime": "1704888060",
+      "actor": "Admin",
+      "actor_id": "user100",
+      "action": "topic_created",
+      "title": "General",
+      "text": ""
+    },
+    {
+      "id": 3,
+      "type": "message",
+      "date": "2024-01-10T12:05:00",
+      "date_unixtime": "1704888300",
+      "from": "User1",
+      "from_id": "user200",
+      "text": "Hello in General topic!",
+      "reply_to_message_id": 2
+    },
+    {
+      "id": 4,
+      "type": "service",
+      "date": "2024-01-10T12:10:00",
+      "date_unixtime": "1704888600",
+      "actor": "Admin",
+      "actor_id": "user100",
+      "action": "topic_created",
+      "title": "Finances",
+      "text": ""
+    },
+    {
+      "id": 5,
+      "type": "message",
+      "date": "2024-01-10T12:15:00",
+      "date_unixtime": "1704888900",
+      "from": "User2",
+      "from_id": "user300",
+      "text": "Budget discussion here",
+      "reply_to_message_id": 4
+    },
+    {
+      "id": 6,
+      "type": "message",
+      "date": "2024-01-10T12:20:00",
+      "date_unixtime": "1704889200",
+      "from": "User1",
+      "from_id": "user200",
+      "text": "More finance talk",
+      "reply_to_message_id": 4,
+      "reactions": [
+        {"type": "emoji", "count": 3, "emoji": "👍"}
+      ]
+    },
+    {
+      "id": 7,
+      "type": "message",
+      "date": "2024-01-11T09:00:00",
+      "date_unixtime": "1704963600",
+      "from": "User3",
+      "from_id": "user400",
+      "text": "Message without topic reference"
+    }
+  ]
+}
