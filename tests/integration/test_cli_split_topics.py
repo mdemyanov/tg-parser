@@ -10,7 +10,7 @@ from typer.testing import CliRunner
 import tg_parser.presentation.cli.commands.split_topics  # noqa: F401
 from tg_parser.presentation.cli.app import app
 
-runner = CliRunner()
+runner = CliRunner(env={"NO_COLOR": "1", "TERM": "dumb"})
 
 
 class TestSplitTopicsCommand:

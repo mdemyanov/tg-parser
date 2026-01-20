@@ -13,7 +13,7 @@ import tg_parser.presentation.cli.commands.parse  # noqa: F401
 from tg_parser.infrastructure.readers import is_ijson_available
 from tg_parser.presentation.cli.app import app
 
-runner = CliRunner()
+runner = CliRunner(env={"NO_COLOR": "1", "TERM": "dumb"})
 
 
 class TestParseCommandStreaming:

@@ -11,7 +11,7 @@ import tg_parser.presentation.cli.commands.config
 import tg_parser.presentation.cli.commands.parse  # noqa: F401
 from tg_parser.presentation.cli.app import app, state
 
-runner = CliRunner()
+runner = CliRunner(env={"NO_COLOR": "1", "TERM": "dumb"})
 
 
 class TestConfigShowCommand:
