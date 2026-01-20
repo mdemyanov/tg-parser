@@ -13,7 +13,6 @@ from tg_parser.domain.exceptions import ConfigError
 from tg_parser.infrastructure.config.mcp_config_manager import MCPConfigManager
 from tg_parser.presentation.cli.app import app, console
 
-
 TargetChoice = Literal["desktop", "code"]
 
 
@@ -179,13 +178,9 @@ def _handle_apply(
         )
     else:
         if apply_result.created_new:
-            msg = (
-                f"[green]Created new configuration at:[/]\n{apply_result.config_path}"
-            )
+            msg = f"[green]Created new configuration at:[/]\n{apply_result.config_path}"
         elif apply_result.updated_existing:
-            msg = (
-                f"[green]Updated tg-parser entry in:[/]\n{apply_result.config_path}"
-            )
+            msg = f"[green]Updated tg-parser entry in:[/]\n{apply_result.config_path}"
         else:
             msg = f"[green]Added tg-parser to:[/]\n{apply_result.config_path}"
 

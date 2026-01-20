@@ -43,9 +43,7 @@ class GetStatisticsUseCase:
         Returns:
             ChatStatistics with aggregated data.
         """
-        from tg_parser.infrastructure.token_counters.simple_counter import (
-            SimpleTokenCounter,
-        )
+        from tg_parser.infrastructure.token_counters import get_token_counter
 
         # Count messages by sender
         sender_counts: Counter[str] = Counter()
@@ -61,7 +59,7 @@ class GetStatisticsUseCase:
             messages_by_topic[topic.title] = count
 
         # Estimate tokens
-        counter = SimpleTokenCounter()
+        counter = get_token_counter()
         estimated_tokens = counter.count_messages(chat.messages)
 
         return ChatStatistics(

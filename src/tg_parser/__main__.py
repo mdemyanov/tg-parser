@@ -22,6 +22,7 @@ def main() -> None:
     else:
         # Run CLI - Import commands to register them with app
         import tg_parser.presentation.cli.commands.chunk
+        import tg_parser.presentation.cli.commands.config
         import tg_parser.presentation.cli.commands.mcp_config
         import tg_parser.presentation.cli.commands.mentions
         import tg_parser.presentation.cli.commands.parse

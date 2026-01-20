@@ -7,8 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned for v1.2.0
-- TOML configuration file support
+## [1.2.0] - 2026-01-20
+
+### Added
+- **TOML configuration file support**: Set default CLI options via config files
+  - Priority-based config discovery (CLI flag > env var > local > home > XDG)
+  - `tg-parser config show` - display current effective configuration
+  - `tg-parser config init` - create example configuration file
+  - `tg-parser config path` - show config file search locations
+  - Global `--config/-c` option for all commands
+- **ConfigSettings value object**: Immutable configuration dataclass
+- **ConfigLoader and FileConfigReader**: TOML parsing with Pydantic validation
+- Config integration with all CLI commands (parse, chunk, stats, mentions, split-topics)
+- 70 new tests for config infrastructure (total: 413 tests)
+
+### Changed
+- CLI commands now resolve defaults from config file when not specified via CLI
+- All boolean flags (--no-frontmatter, --include-service, etc.) can be configured via TOML
+
+### Documentation
+- README.md: Added Configuration section with detailed usage examples
+- CLAUDE.md: Updated Quick Status with config support
+- PRD.md: Updated to v1.2.0 status
 
 ## [1.1.0] - 2026-01-20
 
@@ -152,6 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History Summary
 
+- **v1.2.0** (2026-01-20): TOML config file support, `config` command group, 413 tests
 - **v1.1.0** (2026-01-20): CSV export, split-topics, tiktoken, mcp-config, 343 tests
 - **v1.0.0** (2026-01-19): GitHub publication, PyPI release, CI/CD
 - **v0.3.0** (2025-01-19): Streaming support for large files, 261 tests
@@ -160,7 +181,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **v0.1.0** (2024-12-20): MVP with CLI, MCP server, core parsing
 - **v0.0.1** (2024-12-01): Initial prototype
 
-[Unreleased]: https://github.com/mdemyanov/tg-parser/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/mdemyanov/tg-parser/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/mdemyanov/tg-parser/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/mdemyanov/tg-parser/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/mdemyanov/tg-parser/compare/v0.3.0...v1.0.0
 [0.3.0]: https://github.com/mdemyanov/tg-parser/compare/v0.2.5...v0.3.0

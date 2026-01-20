@@ -6,7 +6,7 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from tg_parser.infrastructure.token_counters.simple_counter import SimpleTokenCounter
+from tg_parser.infrastructure.token_counters import get_token_counter
 
 if TYPE_CHECKING:
     from tg_parser.domain.entities.chat import Chat
@@ -45,7 +45,7 @@ class KBTemplateWriter:
         self._include_extraction_guide = include_extraction_guide
         self._timestamp_format = timestamp_format
         self._date_format = date_format
-        self._token_counter = SimpleTokenCounter()
+        self._token_counter = get_token_counter()
 
     def write(self, chat: Chat, destination: Path) -> None:
         """Write entire chat to KB template file.
@@ -136,9 +136,7 @@ class KBTemplateWriter:
             key=lambda x: x.message_count,
             reverse=True,
         )
-        participants_wikilinks = [
-            f"[[{p.id}|{p.name}]]" for p in sorted_participants
-        ]
+        participants_wikilinks = [f"[[{p.id}|{p.name}]]" for p in sorted_participants]
 
         # Date range
         date_range_str: str | None = None
@@ -242,7 +240,9 @@ class KBTemplateWriter:
         return "\n".join(lines)
 
     def _format_messages(
-        self, messages: list[Message], participants_map: dict[str, str]  # noqa: ARG002
+        self,
+        messages: list[Message],
+        participants_map: dict[str, str],  # noqa: ARG002
     ) -> list[str]:
         """Format messages grouped by date."""
         lines: list[str] = []

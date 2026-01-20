@@ -86,8 +86,8 @@ async def list_tools() -> list[Tool]:
                     },
                     "output_format": {
                         "type": "string",
-                        "enum": ["markdown", "kb", "json"],
-                        "description": "Output format: markdown (default), kb (with YAML frontmatter and WikiLinks), json (structured)",
+                        "enum": ["markdown", "kb", "json", "csv"],
+                        "description": "Output format: markdown (default), kb (with frontmatter), json, csv",
                         "default": "markdown",
                     },
                     "include_extraction_guide": {
@@ -260,7 +260,9 @@ async def _parse_telegram_export(args: dict[str, Any]) -> list[TextContent]:
     # Build filter specification
     date_range: DateRange | None = None
     if args.get("date_from") or args.get("date_to"):
-        start = datetime.fromisoformat(args["date_from"]) if args.get("date_from") else None
+        start = (
+            datetime.fromisoformat(args["date_from"]) if args.get("date_from") else None
+        )
         end = datetime.fromisoformat(args["date_to"]) if args.get("date_to") else None
         date_range = DateRange(start=start, end=end)
 
@@ -348,7 +350,9 @@ async def _get_chat_statistics(args: dict[str, Any]) -> list[TextContent]:
         "messages_by_topic": stats.messages_by_topic,
     }
 
-    return [TextContent(type="text", text=json.dumps(result, indent=2, ensure_ascii=False))]
+    return [
+        TextContent(type="text", text=json.dumps(result, indent=2, ensure_ascii=False))
+    ]
 
 
 async def _list_chat_participants(args: dict[str, Any]) -> list[TextContent]:
@@ -372,7 +376,11 @@ async def _list_chat_participants(args: dict[str, Any]) -> list[TextContent]:
         )
     ]
 
-    return [TextContent(type="text", text=json.dumps(participants, indent=2, ensure_ascii=False))]
+    return [
+        TextContent(
+            type="text", text=json.dumps(participants, indent=2, ensure_ascii=False)
+        )
+    ]
 
 
 async def _list_chat_topics(args: dict[str, Any]) -> list[TextContent]:
@@ -383,13 +391,18 @@ async def _list_chat_topics(args: dict[str, Any]) -> list[TextContent]:
     chat = parse_use_case.execute(file_path)
 
     if not chat.topics:
-        return [TextContent(type="text", text="This chat does not have topics (not a forum).")]
+        return [
+            TextContent(
+                type="text", text="This chat does not have topics (not a forum)."
+            )
+        ]
 
     # Count messages per topic
     topic_message_counts: dict[int, int] = {}
     for msg in chat.messages:
         if msg.topic_id:
-            topic_message_counts[msg.topic_id] = topic_message_counts.get(msg.topic_id, 0) + 1
+            current = topic_message_counts.get(msg.topic_id, 0)
+            topic_message_counts[msg.topic_id] = current + 1
 
     topics = [
         {
@@ -406,7 +419,8 @@ async def _list_chat_topics(args: dict[str, Any]) -> list[TextContent]:
         )
     ]
 
-    return [TextContent(type="text", text=json.dumps(topics, indent=2, ensure_ascii=False))]
+    result_json = json.dumps(topics, indent=2, ensure_ascii=False)
+    return [TextContent(type="text", text=result_json)]
 
 
 async def _chunk_telegram_export(args: dict[str, Any]) -> list[TextContent]:
@@ -429,12 +443,9 @@ async def _chunk_telegram_export(args: dict[str, Any]) -> list[TextContent]:
     # If specific chunk requested, return it
     if chunk_index is not None:
         if chunk_index < 0 or chunk_index >= len(result.chunks):
-            return [
-                TextContent(
-                    type="text",
-                    text=f"Invalid chunk index: {chunk_index}. Valid range: 0-{len(result.chunks) - 1}",
-                )
-            ]
+            max_idx = len(result.chunks) - 1
+            msg = f"Invalid chunk index: {chunk_index}. Valid range: 0-{max_idx}"
+            return [TextContent(type="text", text=msg)]
 
         chunk_obj = result.chunks[chunk_index]
         return _format_single_chunk(chunk_obj, result)
@@ -455,16 +466,15 @@ def _format_single_chunk(chunk_obj: Any, result: Any) -> list[TextContent]:
 
     if meta.topic_title:
         if meta.total_parts > 1:
-            lines.append(
-                f"Topic: {meta.topic_title} (Part {meta.part_number}/{meta.total_parts})"
-            )
+            part_info = f"(Part {meta.part_number}/{meta.total_parts})"
+            lines.append(f"Topic: {meta.topic_title} {part_info}")
         else:
             lines.append(f"Topic: {meta.topic_title}")
 
     if meta.date_range_start and meta.date_range_end:
-        lines.append(
-            f"Period: {meta.date_range_start.isoformat()} to {meta.date_range_end.isoformat()}"
-        )
+        start = meta.date_range_start.isoformat()
+        end = meta.date_range_end.isoformat()
+        lines.append(f"Period: {start} to {end}")
 
     lines.append(f"Messages: {chunk_obj.message_count}")
     lines.append(f"Estimated tokens: {meta.estimated_tokens}")
@@ -526,7 +536,8 @@ def _format_chunk_summary(result: Any) -> list[TextContent]:
         ],
     }
 
-    return [TextContent(type="text", text=json.dumps(summary, indent=2, ensure_ascii=False))]
+    result_json = json.dumps(summary, indent=2, ensure_ascii=False)
+    return [TextContent(type="text", text=result_json)]
 
 
 async def _list_mentioned_users(args: dict[str, Any]) -> list[TextContent]:
@@ -539,8 +550,10 @@ async def _list_mentioned_users(args: dict[str, Any]) -> list[TextContent]:
     # Build filter spec
     date_range: DateRange | None = None
     if args.get("date_from") or args.get("date_to"):
-        start = datetime.fromisoformat(args["date_from"]) if args.get("date_from") else None
-        end = datetime.fromisoformat(args["date_to"]) if args.get("date_to") else None
+        date_from = args.get("date_from")
+        date_to = args.get("date_to")
+        start = datetime.fromisoformat(date_from) if date_from else None
+        end = datetime.fromisoformat(date_to) if date_to else None
         date_range = DateRange(start=start, end=end)
 
     filter_spec = FilterSpecification(date_range=date_range)
@@ -579,7 +592,8 @@ async def _list_mentioned_users(args: dict[str, Any]) -> list[TextContent]:
         ],
     }
 
-    return [TextContent(type="text", text=json.dumps(output, indent=2, ensure_ascii=False))]
+    result_json = json.dumps(output, indent=2, ensure_ascii=False)
+    return [TextContent(type="text", text=result_json)]
 
 
 def run_mcp_server() -> None:
@@ -592,4 +606,5 @@ def run_mcp_server() -> None:
 async def main() -> None:
     """Main entry point for MCP server."""
     async with stdio_server() as (read_stream, write_stream):
-        await server.run(read_stream, write_stream, server.create_initialization_options())
+        init_options = server.create_initialization_options()
+        await server.run(read_stream, write_stream, init_options)

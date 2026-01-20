@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/tg-parser.svg)](https://pypi.org/project/tg-parser/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-343%20passing-green.svg)](https://github.com/mdemyanov/tg-parser)
+[![Tests](https://img.shields.io/badge/tests-413%20passing-green.svg)](https://github.com/mdemyanov/tg-parser)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Type Checked](https://img.shields.io/badge/type%20checked-pyright-blue.svg)](https://github.com/microsoft/pyright)
 
@@ -13,7 +13,7 @@ Transform messy chat exports into clean, structured data ready for summarization
 
 ## Features
 
-### Implemented ✅ (v1.1.0)
+### Implemented ✅ (v1.2.0)
 
 - 🗂️ **All chat types**: Personal, groups, supergroups, forum topics, channels
 - 🔍 **Powerful filtering**: 9 filter types (date, sender, content, topic, attachments, reactions, etc.)
@@ -23,13 +23,10 @@ Transform messy chat exports into clean, structured data ready for summarization
 - 🔌 **MCP integration**: 6 tools for Claude Desktop/Code
 - 📊 **Statistics**: Message counts, top senders, topics breakdown, mention analysis
 - 🎯 **tiktoken integration**: Accurate token counting (with SimpleTokenCounter fallback)
-- 🆕 **split-topics command**: Split forum chats by topic into separate files
-- ✅ **Type-safe**: pyright strict mode, 343 comprehensive tests
-- 🆕 **mcp-config command**: Auto-configure Claude Desktop/Code MCP integration
-
-### Coming Soon 🚧
-
-- 🔧 **Config files**: TOML configuration support (P3)
+- 📄 **split-topics command**: Split forum chats by topic into separate files
+- ✅ **Type-safe**: pyright strict mode, 413 comprehensive tests
+- 🔧 **mcp-config command**: Auto-configure Claude Desktop/Code MCP integration
+- 🆕 **Config file support**: TOML configuration with `config` command group
 
 ## Installation
 
@@ -329,25 +326,69 @@ Tabular format for spreadsheet analysis.
 
 ## Configuration
 
+tg-parser supports TOML configuration files for setting default options.
+
+### Config File Locations (priority order)
+
+1. `--config PATH` CLI flag
+2. `TG_PARSER_CONFIG` environment variable
+3. `./tg-parser.toml` (current directory)
+4. `./.tg-parser.toml` (current directory, hidden)
+5. `~/tg-parser.toml` (home directory)
+6. `~/.tg-parser.toml` (home directory, hidden)
+7. `~/.config/tg-parser/config.toml` (XDG standard)
+
+### Managing Config
+
+```bash
+# Create example config in current directory
+tg-parser config init
+
+# Create in specific location
+tg-parser config init -o ~/.tg-parser.toml
+
+# Show current effective config
+tg-parser config show -v
+
+# Show all search locations
+tg-parser config path
+
+# Use custom config for a command
+tg-parser --config myconfig.toml parse export.json
+```
+
+### Config File Format
+
 Create `~/.config/tg-parser/config.toml`:
 
 ```toml
 [default]
-output_format = "markdown"
+output_format = "markdown"   # markdown, kb, json, csv
 output_dir = "~/Documents/tg-exports"
 
 [filtering]
 exclude_service = true
+exclude_empty = true
+exclude_forwards = false
 min_message_length = 0
 
 [chunking]
-strategy = "conversation"
-max_tokens = 3000
-time_gap_minutes = 30
+strategy = "fixed"           # fixed, topic, hybrid
+max_tokens = 8000
 
-[token_counter]
-backend = "tiktoken"  # or "simple" for no deps
+[output.markdown]
+include_extraction_guide = false
+no_frontmatter = false
+
+[mentions]
+min_count = 1
+output_format = "table"      # table, json
+
+[stats]
+top_senders = 10
 ```
+
+**CLI arguments always override config file values.**
 
 ## Development
 
@@ -391,7 +432,7 @@ presentation/  →  application/  →  domain/  ←  infrastructure/
 
 ## Development Status
 
-**Current Version:** 1.0.0 (Stable)
+**Current Version:** 1.2.0 (Stable)
 
 | Component | Status | Details |
 |-----------|--------|---------|
@@ -399,17 +440,19 @@ presentation/  →  application/  →  domain/  ←  infrastructure/
 | Filtering | ✅ Complete | 9 filter types |
 | Chunking | ✅ Complete | 3 strategies (fixed, topic, hybrid) |
 | Streaming | ✅ Complete | ijson reader, auto-detection >50MB |
-| CLI | ✅ Complete | 4 commands: `parse`, `stats`, `chunk`, `mentions` |
+| CLI | ✅ Complete | 7 commands: `parse`, `stats`, `chunk`, `mentions`, `split-topics`, `mcp-config`, `config` |
 | MCP Server | ✅ Complete | 6 tools for Claude integration |
-| Writers | ✅ Complete | Markdown, JSON, KB-template |
-| Tests | ✅ Complete | 261 tests, pyright strict |
-| PyPI | ✅ Published | v1.0.0 available |
+| Writers | ✅ Complete | Markdown, JSON, KB-template, CSV |
+| Config | ✅ Complete | TOML config files, `config` command group |
+| Tests | ✅ Complete | 413 tests, pyright strict |
+| PyPI | ✅ Published | v1.2.0 available |
 | CI/CD | ✅ Automated | GitHub Actions for testing & releases |
 
 ### Roadmap
 
 - **v1.0.0**: ✅ **RELEASED** - Production stable, PyPI published, CI/CD automated
-- **v1.1.0**: CSV output, split-topics command, tiktoken integration
+- **v1.1.0**: ✅ **RELEASED** - CSV output, split-topics command, tiktoken integration
+- **v1.2.0**: ✅ **RELEASED** - TOML config file support, `config` command group
 
 See [PRD.md](PRD.md) for detailed roadmap.
 

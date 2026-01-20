@@ -151,7 +151,7 @@ class TelegramStreamReader:
         if topics is None:
             topics = self._extract_topics(source)
 
-        with open(source, "rb") as f:
+        with source.open("rb") as f:
             for raw in ijson.items(f, "messages.item"):
                 raw_dict: dict[str, Any] = raw
                 msg = parse_message(raw_dict, topics)
@@ -176,7 +176,7 @@ class TelegramStreamReader:
             return warnings
 
         try:
-            with open(source, "rb") as f:
+            with source.open("rb") as f:
                 # Check for required top-level keys
                 found_keys: set[str] = set()
                 parser = ijson.parse(f)
@@ -214,7 +214,7 @@ class TelegramStreamReader:
         metadata: dict[str, Any] = {}
 
         try:
-            with open(source, "rb") as f:
+            with source.open("rb") as f:
                 parser = ijson.parse(f)
 
                 for prefix, event, value in parser:
@@ -247,7 +247,7 @@ class TelegramStreamReader:
 
         topics: dict[TopicId, Topic] = {}
 
-        with open(source, "rb") as f:
+        with source.open("rb") as f:
             for raw in ijson.items(f, "messages.item"):
                 raw_dict: dict[str, Any] = raw
                 if raw_dict.get("type") != "service":
@@ -299,7 +299,7 @@ class TelegramStreamReader:
         import ijson
 
         count = 0
-        with open(source, "rb") as f:
+        with source.open("rb") as f:
             parser = ijson.parse(f)
             for prefix, event, _ in parser:
                 if prefix == "messages.item" and event == "start_map":

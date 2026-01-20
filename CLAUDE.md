@@ -8,7 +8,7 @@
 
 **Primary use case:** Parse corporate Telegram chats → clean & chunk data → summarize with Claude.
 
-**Current version:** v1.1.0 (Development)
+**Current version:** v1.2.0
 
 **Architecture:** Clean Architecture (domain/application/infrastructure/presentation)
 
@@ -16,7 +16,7 @@
 
 ### What Works ✅
 
-- **CLI:** 6 commands (`parse`, `stats`, `chunk`, `mentions`, `split-topics`, `mcp-config`)
+- **CLI:** 7 commands (`parse`, `stats`, `chunk`, `mentions`, `split-topics`, `mcp-config`, `config`)
 - **MCP:** 6 tools for Claude Desktop/Code integration
 - **Parsing:** All chat types (personal, group, supergroup, forum, channel)
 - **Filtering:** 9 filter types (date, sender, topic, content, etc.)
@@ -24,14 +24,15 @@
 - **Streaming:** ijson-based for files >50MB (auto-detection)
 - **Output:** Markdown, JSON, KB-template, CSV formats
 - **Token counting:** tiktoken integration (with SimpleTokenCounter fallback)
-- **Quality:** 343 tests, pyright strict mode
+- **Config:** TOML config file support with discovery (`config show/init/path`)
+- **Quality:** 413 tests, pyright strict mode
 - **GitHub:** https://github.com/mdemyanov/tg-parser
-- **PyPI:** Published v1.0.0 - `pip install tg-parser`
+- **PyPI:** Published v1.2.0 - `pip install tg-parser`
 - **CI/CD:** 4 automated workflows (tests, typecheck, lint, publish)
 
 ### What's Missing ❌
 
-- Config file support (P3, planned v1.2.0+)
+- (All planned features for v1.2.0 implemented)
 
 ## Core Principles
 

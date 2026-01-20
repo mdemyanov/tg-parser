@@ -29,7 +29,9 @@ class TestTelegramStreamReader:
         # 4 regular messages + 1 service = 5 total
         assert len(chat.messages) == 5
 
-    def test_read_supergroup_with_topics(self, supergroup_with_topics_path: Path) -> None:
+    def test_read_supergroup_with_topics(
+        self, supergroup_with_topics_path: Path
+    ) -> None:
         """Test reading supergroup with topics."""
         reader = TelegramStreamReader()
         chat = reader.read(supergroup_with_topics_path)
@@ -110,7 +112,9 @@ class TestTelegramStreamReader:
         last_current, last_total = calls[-1]
         assert last_current == last_total
 
-    def test_progress_callback_respects_interval(self, personal_chat_path: Path) -> None:
+    def test_progress_callback_respects_interval(
+        self, personal_chat_path: Path
+    ) -> None:
         """Test progress callback respects interval setting."""
         calls: list[tuple[int, int]] = []
 

@@ -56,5 +56,6 @@ class FilterSpecification:
             and self.has_attachment is None
             and self.has_reactions is None
             and not self.exclude_forwards
-            # exclude_service and exclude_empty are defaults, don't count as "active" filters
+            # exclude_service and exclude_empty are defaults,
+            # don't count as "active" filters
         )

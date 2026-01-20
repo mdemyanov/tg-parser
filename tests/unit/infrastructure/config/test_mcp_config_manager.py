@@ -62,7 +62,7 @@ class TestMCPConfigManager:
         with patch.object(manager, "is_in_venv", return_value=False):
             config = manager.generate_config(use_uv_run=False)
             assert "mcpServers" in config
-            mcp_servers = cast(dict[str, Any], config["mcpServers"])
+            mcp_servers = cast("dict[str, Any]", config["mcpServers"])
             assert "tg-parser" in mcp_servers
             server_config = mcp_servers["tg-parser"]
             assert server_config["command"] == "uvx"
@@ -74,7 +74,7 @@ class TestMCPConfigManager:
         with patch.object(manager, "is_in_venv", return_value=False):
             config = manager.generate_config(use_uv_run=True)
             assert "mcpServers" in config
-            mcp_servers = cast(dict[str, Any], config["mcpServers"])
+            mcp_servers = cast("dict[str, Any]", config["mcpServers"])
             server_config = mcp_servers["tg-parser"]
             assert server_config["command"] == "uv"
             assert server_config["args"] == ["run", "tg-parser", "mcp"]
@@ -153,14 +153,16 @@ class TestMCPConfigManager:
     def test_merge_config_preserves_other_servers(self) -> None:
         """Test merge preserves other MCP servers."""
         manager = MCPConfigManager()
-        existing: dict[str, object] = {"mcpServers": {"other-tool": {"command": "other"}}}
+        existing: dict[str, object] = {
+            "mcpServers": {"other-tool": {"command": "other"}}
+        }
         new: dict[str, object] = {
             "mcpServers": {"tg-parser": {"command": "uvx", "args": ["tg-parser"]}}
         }
 
         result = manager.merge_config(existing, new)
 
-        mcp_servers = cast(dict[str, Any], result["mcpServers"])
+        mcp_servers = cast("dict[str, Any]", result["mcpServers"])
         assert "other-tool" in mcp_servers
         assert "tg-parser" in mcp_servers
 
@@ -172,7 +174,7 @@ class TestMCPConfigManager:
 
         result = manager.merge_config(existing, new)
 
-        mcp_servers = cast(dict[str, Any], result["mcpServers"])
+        mcp_servers = cast("dict[str, Any]", result["mcpServers"])
         assert mcp_servers["tg-parser"]["command"] == "new"
 
     def test_merge_config_creates_mcp_servers_if_missing(self) -> None:
@@ -184,7 +186,7 @@ class TestMCPConfigManager:
         result = manager.merge_config(existing, new)
 
         assert "mcpServers" in result
-        mcp_servers = cast(dict[str, Any], result["mcpServers"])
+        mcp_servers = cast("dict[str, Any]", result["mcpServers"])
         assert "tg-parser" in mcp_servers
         assert result["otherKey"] == "value"
 

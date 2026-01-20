@@ -36,9 +36,7 @@ class TestParseCommand:
         output_files = list(output_dir.glob("*.md"))
         assert len(output_files) == 1
 
-    def test_parse_with_verbose(
-        self, personal_chat_path: Path, tmp_path: Path
-    ) -> None:
+    def test_parse_with_verbose(self, personal_chat_path: Path, tmp_path: Path) -> None:
         """Test parse with verbose flag."""
         output_dir = tmp_path / "output"
         result = runner.invoke(
@@ -56,7 +54,14 @@ class TestParseCommand:
         output_dir = tmp_path / "output"
         result = runner.invoke(
             app,
-            ["parse", str(personal_chat_path), "-o", str(output_dir), "--senders", "Alice"],
+            [
+                "parse",
+                str(personal_chat_path),
+                "-o",
+                str(output_dir),
+                "--senders",
+                "Alice",
+            ],
         )
         assert result.exit_code == 0
         # Should have fewer messages
@@ -81,9 +86,7 @@ class TestParseCommand:
         assert result.exit_code != 0
         assert "Unsupported format" in result.stdout
 
-    def test_parse_kb_format(
-        self, personal_chat_path: Path, tmp_path: Path
-    ) -> None:
+    def test_parse_kb_format(self, personal_chat_path: Path, tmp_path: Path) -> None:
         """Test parsing with KB format produces YAML frontmatter."""
         output_dir = tmp_path / "output"
         result = runner.invoke(
@@ -109,9 +112,7 @@ class TestParseCommand:
         # WikiLinks in headers
         assert "[[user" in content
 
-    def test_parse_json_format(
-        self, personal_chat_path: Path, tmp_path: Path
-    ) -> None:
+    def test_parse_json_format(self, personal_chat_path: Path, tmp_path: Path) -> None:
         """Test parsing with JSON format produces valid JSON."""
         import json
 
@@ -142,7 +143,15 @@ class TestParseCommand:
         output_dir = tmp_path / "output"
         result = runner.invoke(
             app,
-            ["parse", str(personal_chat_path), "-o", str(output_dir), "-f", "kb", "--no-frontmatter"],
+            [
+                "parse",
+                str(personal_chat_path),
+                "-o",
+                str(output_dir),
+                "-f",
+                "kb",
+                "--no-frontmatter",
+            ],
         )
         assert result.exit_code == 0
         assert "Parsed" in result.stdout
@@ -466,7 +475,11 @@ class TestTopicFiltering:
 
         # Check expected files exist
         filenames = {f.stem for f in output_files}
-        assert "General" in filenames or "Finances" in filenames or "_no_topic" in filenames
+        assert (
+            "General" in filenames
+            or "Finances" in filenames
+            or "_no_topic" in filenames
+        )
 
     def test_parse_split_topics_verbose(
         self, supergroup_with_topics_path: Path, tmp_path: Path
@@ -526,7 +539,9 @@ class TestMentionsCommand:
         result = runner.invoke(app, ["mentions", str(supergroup_with_topics_path)])
         assert result.exit_code == 0
         # Should show mentions info or "No mentions found"
-        assert "Total mentions:" in result.stdout or "No mentions found" in result.stdout
+        assert (
+            "Total mentions:" in result.stdout or "No mentions found" in result.stdout
+        )
 
     def test_mentions_json_format(self, supergroup_with_topics_path: Path) -> None:
         """Test JSON output format."""
@@ -655,10 +670,12 @@ class TestExtractionGuideFlag:
         """Test that parse help shows extraction guide option."""
         result = runner.invoke(app, ["parse", "--help"])
         assert result.exit_code == 0
-        assert "--include-extraction-guide" in result.stdout
+        # Use partial match because Rich may truncate long option names
+        assert "--include-extraction" in result.stdout
 
     def test_chunk_help_shows_extraction_guide_option(self) -> None:
         """Test that chunk help shows extraction guide option."""
         result = runner.invoke(app, ["chunk", "--help"])
         assert result.exit_code == 0
-        assert "--include-extraction-guide" in result.stdout
+        # Use partial match because Rich may truncate long option names
+        assert "--include-extraction" in result.stdout

@@ -107,15 +107,12 @@ class MCPConfigManager:
         if self.is_in_venv():
             # Use the full path to Python in the venv
             python_path = sys.executable
-            return MCPServerConfig(
-                command=python_path, args=["-m", "tg_parser", "mcp"]
-            )
+            return MCPServerConfig(command=python_path, args=["-m", "tg_parser", "mcp"])
+        # Use uv run or uvx for globally installed package
+        elif use_uv_run:
+            return MCPServerConfig(command="uv", args=["run", "tg-parser", "mcp"])
         else:
-            # Use uv run or uvx for globally installed package
-            if use_uv_run:
-                return MCPServerConfig(command="uv", args=["run", "tg-parser", "mcp"])
-            else:
-                return MCPServerConfig(command="uvx", args=["tg-parser", "mcp"])
+            return MCPServerConfig(command="uvx", args=["tg-parser", "mcp"])
 
     def generate_config(self, use_uv_run: bool = False) -> dict[str, object]:
         """Generate MCP configuration for tg-parser.

@@ -1,11 +1,11 @@
 """Integration tests for MCP list_mentioned_users tool."""
-# ruff: noqa: PLC0415 - imports inside test methods to handle optional MCP dependency
+
 # pyright: reportPrivateUsage=false
 
 from __future__ import annotations
 
 import json
-from pathlib import Path  # noqa: TC003 - used at runtime in pytest fixtures
+from pathlib import Path
 
 import pytest
 
@@ -20,10 +20,12 @@ class TestMCPListMentionedUsers:
         """Test MCP tool returns correct structure."""
         from tg_parser.presentation.mcp.server import _list_mentioned_users
 
-        result = await _list_mentioned_users({
-            "file_path": str(supergroup_with_topics_path),
-            "min_count": 1,
-        })
+        result = await _list_mentioned_users(
+            {
+                "file_path": str(supergroup_with_topics_path),
+                "min_count": 1,
+            }
+        )
 
         assert len(result) == 1
         data = json.loads(result[0].text)
@@ -41,11 +43,13 @@ class TestMCPListMentionedUsers:
         """Test date filtering in MCP tool."""
         from tg_parser.presentation.mcp.server import _list_mentioned_users
 
-        result = await _list_mentioned_users({
-            "file_path": str(supergroup_with_topics_path),
-            "date_from": "2025-01-01",
-            "date_to": "2025-12-31",
-        })
+        result = await _list_mentioned_users(
+            {
+                "file_path": str(supergroup_with_topics_path),
+                "date_from": "2025-01-01",
+                "date_to": "2025-12-31",
+            }
+        )
 
         assert len(result) == 1
         data = json.loads(result[0].text)
@@ -58,10 +62,12 @@ class TestMCPListMentionedUsers:
         """Test min_count filtering in MCP tool."""
         from tg_parser.presentation.mcp.server import _list_mentioned_users
 
-        result = await _list_mentioned_users({
-            "file_path": str(supergroup_with_topics_path),
-            "min_count": 100,  # High threshold should return no mentions
-        })
+        result = await _list_mentioned_users(
+            {
+                "file_path": str(supergroup_with_topics_path),
+                "min_count": 100,  # High threshold should return no mentions
+            }
+        )
 
         assert len(result) == 1
         data = json.loads(result[0].text)
@@ -75,9 +81,11 @@ class TestMCPListMentionedUsers:
         """Test mention object structure in MCP tool response."""
         from tg_parser.presentation.mcp.server import _list_mentioned_users
 
-        result = await _list_mentioned_users({
-            "file_path": str(supergroup_with_topics_path),
-        })
+        result = await _list_mentioned_users(
+            {
+                "file_path": str(supergroup_with_topics_path),
+            }
+        )
 
         data = json.loads(result[0].text)
 
@@ -99,11 +107,13 @@ class TestMCPParseWithExtractionGuide:
         """Test MCP parse includes extraction guide in markdown."""
         from tg_parser.presentation.mcp.server import _parse_telegram_export
 
-        result = await _parse_telegram_export({
-            "file_path": str(personal_chat_path),
-            "output_format": "markdown",
-            "include_extraction_guide": True,
-        })
+        result = await _parse_telegram_export(
+            {
+                "file_path": str(personal_chat_path),
+                "output_format": "markdown",
+                "include_extraction_guide": True,
+            }
+        )
 
         assert len(result) == 1
         content = result[0].text
@@ -117,11 +127,13 @@ class TestMCPParseWithExtractionGuide:
         """Test MCP parse includes extraction guide in JSON meta."""
         from tg_parser.presentation.mcp.server import _parse_telegram_export
 
-        result = await _parse_telegram_export({
-            "file_path": str(personal_chat_path),
-            "output_format": "json",
-            "include_extraction_guide": True,
-        })
+        result = await _parse_telegram_export(
+            {
+                "file_path": str(personal_chat_path),
+                "output_format": "json",
+                "include_extraction_guide": True,
+            }
+        )
 
         assert len(result) == 1
         data = json.loads(result[0].text)
@@ -135,11 +147,13 @@ class TestMCPParseWithExtractionGuide:
         """Test MCP parse without extraction guide flag."""
         from tg_parser.presentation.mcp.server import _parse_telegram_export
 
-        result = await _parse_telegram_export({
-            "file_path": str(personal_chat_path),
-            "output_format": "markdown",
-            # include_extraction_guide not set, defaults to False
-        })
+        result = await _parse_telegram_export(
+            {
+                "file_path": str(personal_chat_path),
+                "output_format": "markdown",
+                # include_extraction_guide not set, defaults to False
+            }
+        )
 
         assert len(result) == 1
         content = result[0].text

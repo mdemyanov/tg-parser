@@ -9,7 +9,7 @@ from rich.table import Table
 
 from tg_parser.application.use_cases.get_statistics import GetStatisticsUseCase
 from tg_parser.application.use_cases.parse_chat import ParseChatUseCase
-from tg_parser.presentation.cli.app import app, console
+from tg_parser.presentation.cli.app import app, console, get_config
 
 
 @app.command()
@@ -19,13 +19,18 @@ def stats(
         help="Path to Telegram JSON export.",
         exists=True,
     ),
-    top_senders: int = typer.Option(
-        10,
+    top_senders: int | None = typer.Option(
+        None,
         "--top-senders",
-        help="Number of top senders to show.",
+        help="Number of top senders to show (default: from config).",
     ),
 ) -> None:
     """Show chat statistics."""
+    # Resolve defaults from config
+    config = get_config()
+    if top_senders is None:
+        top_senders = config.stats.top_senders
+
     # Parse chat
     parse_use_case = ParseChatUseCase()
     chat = parse_use_case.execute(input_path)

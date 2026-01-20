@@ -1,6 +1,6 @@
 [project]
 name = "tg-parser"
-version = "1.0.0"
+version = "1.2.0"
 description = "Parse Telegram Desktop JSON exports for LLM processing"
 readme = "README.md"
 license = { text = "MIT" }
@@ -81,8 +81,19 @@ select = [
 ignore = [
     "PLR0913",  # Too many arguments
     "PLR2004",  # Magic value comparison
+    "PLR0912",  # Too many branches (CLI commands are complex by design)
+    "PLR0915",  # Too many statements (CLI commands are complex by design)
+    "PLR0911",  # Too many return statements (MCP handler with multiple tools)
     "B008",     # Function call in default argument (typer pattern)
+    "PLC0415",  # Import not at top level (used intentionally for lazy loading)
+    "TC001",    # Move import into TYPE_CHECKING block (false positives for runtime use)
+    "TC003",    # Move stdlib import into TYPE_CHECKING block (false positives)
+    "SIM117",   # Nested with statements (readability preference)
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ARG002", "E501", "E402", "S101", "RUF015"]  # Test files: various test-specific allowances
+"src/tg_parser/presentation/mcp/server.py" = ["E501"]  # MCP server: JSON schemas have long descriptions
 
 [tool.ruff.lint.isort]
 known-first-party = ["tg_parser"]

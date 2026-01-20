@@ -28,14 +28,14 @@ from tg_parser.domain.value_objects.filter_spec import FilterSpecification
 from tg_parser.infrastructure.filters import build_filter
 from tg_parser.infrastructure.readers import get_reader, is_ijson_available
 from tg_parser.infrastructure.writers import get_writer
-from tg_parser.presentation.cli.app import app, console
+from tg_parser.presentation.cli.app import app, console, get_config
 
 if TYPE_CHECKING:
     from tg_parser.domain.entities.message import Message
     from tg_parser.domain.protocols.writer import ChatWriterProtocol
     from tg_parser.domain.value_objects.identifiers import TopicId
 
-SUPPORTED_FORMATS = ("markdown", "kb", "json")
+SUPPORTED_FORMATS = ("markdown", "kb", "json", "csv")
 
 # Threshold for showing progress bar (in MB)
 PROGRESS_THRESHOLD_MB = 10
@@ -71,17 +71,17 @@ def parse(
         dir_okay=False,
         readable=True,
     ),
-    output: Path = typer.Option(
-        Path("./output"),
+    output: Path | None = typer.Option(
+        None,
         "-o",
         "--output",
-        help="Output directory.",
+        help="Output directory (default: ./output or from config).",
     ),
-    output_format: str = typer.Option(
-        "markdown",
+    output_format: str | None = typer.Option(
+        None,
         "-f",
         "--format",
-        help="Output format: markdown, kb, json.",
+        help="Output format: markdown, kb, json, csv (default: from config).",
     ),
     no_frontmatter: bool = typer.Option(
         False,
@@ -136,7 +136,7 @@ def parse(
     include_service: bool = typer.Option(
         False,
         "--include-service",
-        help="Include service messages.",
+        help="Include service messages (overrides config exclude_service).",
     ),
     exclude_forwards: bool = typer.Option(
         False,
@@ -162,6 +162,26 @@ def parse(
 ) -> None:
     """Parse Telegram JSON export with optional filters."""
     try:
+        # Resolve defaults from config
+        config = get_config()
+        if output is None:
+            output = config.default.output_dir or Path("./output")
+        if output_format is None:
+            output_format = config.default.output_format
+        # Boolean flags: CLI flags override config when explicitly set
+        # no_frontmatter: use config default only if not set via CLI
+        if not no_frontmatter:
+            no_frontmatter = config.output_markdown.no_frontmatter
+        # include_service: if not set, respect config's exclude_service
+        if not include_service:
+            include_service = not config.filtering.exclude_service
+        # exclude_forwards: if not set, use config
+        if not exclude_forwards:
+            exclude_forwards = config.filtering.exclude_forwards
+        # include_extraction_guide: if not set, use config
+        if not include_extraction_guide:
+            include_extraction_guide = config.output_markdown.include_extraction_guide
+
         # Validate format
         if output_format not in SUPPORTED_FORMATS:
             console.print(
@@ -186,8 +206,10 @@ def parse(
 
         # Determine if we should use streaming with progress
         file_size_mb = input_path.stat().st_size / (1024 * 1024)
-        use_streaming = streaming if streaming is not None else (
-            file_size_mb > 50 and is_ijson_available()
+        use_streaming = (
+            streaming
+            if streaming is not None
+            else (file_size_mb > 50 and is_ijson_available())
         )
         show_progress = use_streaming and file_size_mb > PROGRESS_THRESHOLD_MB
 
@@ -218,9 +240,7 @@ def parse(
             total_messages = sum(written_files.values())
             files_count = len(written_files)
             msg = f"[green]Split {total_messages} messages into {files_count} files[/]"
-            console.print(
-                Panel(f"{msg}\nOutput directory: {output}", title="Success")
-            )
+            console.print(Panel(f"{msg}\nOutput directory: {output}", title="Success"))
             if verbose:
                 table = Table(title="Files Created")
                 table.add_column("File", style="cyan")
@@ -423,6 +443,8 @@ def _get_writer_for_format(
     """
     if output_format == "json":
         return get_writer("json", include_extraction_guide=include_extraction_guide)
+    elif output_format == "csv":
+        return get_writer("csv", include_extraction_guide=include_extraction_guide)
     elif output_format == "kb" and not no_frontmatter:
         return get_writer("kb", include_extraction_guide=include_extraction_guide)
     else:
@@ -438,7 +460,12 @@ def _get_file_extension(output_format: str) -> str:
     Returns:
         File extension with leading dot.
     """
-    return ".json" if output_format == "json" else ".md"
+    if output_format == "json":
+        return ".json"
+    elif output_format == "csv":
+        return ".csv"
+    else:
+        return ".md"
 
 
 def _write_single_file(

@@ -7,11 +7,10 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from tg_parser.infrastructure.readers import is_ijson_available
-
 # Import commands to register them with the app
-import tg_parser.presentation.cli.commands.chunk  # noqa: F401
+import tg_parser.presentation.cli.commands.chunk
 import tg_parser.presentation.cli.commands.parse  # noqa: F401
+from tg_parser.infrastructure.readers import is_ijson_available
 from tg_parser.presentation.cli.app import app
 
 runner = CliRunner()
@@ -109,9 +108,7 @@ class TestParseCommandStreaming:
 class TestChunkCommandStreaming:
     """Test chunk command with streaming options."""
 
-    def test_chunk_default_mode(
-        self, personal_chat_path: Path, tmp_path: Path
-    ) -> None:
+    def test_chunk_default_mode(self, personal_chat_path: Path, tmp_path: Path) -> None:
         """Test chunk command with default (auto) streaming mode."""
         result = runner.invoke(
             app, ["chunk", str(personal_chat_path), "-o", str(tmp_path)]

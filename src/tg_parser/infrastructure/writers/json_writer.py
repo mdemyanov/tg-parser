@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from tg_parser.infrastructure.token_counters.simple_counter import SimpleTokenCounter
+from tg_parser.infrastructure.token_counters import get_token_counter
 
 if TYPE_CHECKING:
     from tg_parser.domain.entities.chat import Chat
@@ -33,7 +33,7 @@ class JSONWriter:
         """
         self._indent = indent if indent > 0 else None
         self._include_extraction_guide = include_extraction_guide
-        self._token_counter = SimpleTokenCounter()
+        self._token_counter = get_token_counter()
 
     def write(self, chat: Chat, destination: Path) -> None:
         """Write entire chat to JSON file.
@@ -164,12 +164,14 @@ class JSONWriter:
         result: list[dict[str, Any]] = []
         for topic in chat.topics.values():
             created = topic.created_at.isoformat() if topic.created_at else None
-            result.append({
-                "id": topic.id,
-                "title": topic.title,
-                "is_general": topic.is_general,
-                "created_at": created,
-            })
+            result.append(
+                {
+                    "id": topic.id,
+                    "title": topic.title,
+                    "is_general": topic.is_general,
+                    "created_at": created,
+                }
+            )
         return result
 
     def _format_message(self, msg: Message) -> dict[str, Any]:

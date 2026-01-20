@@ -1,9 +1,9 @@
 # PRD: Telegram Chat Parser for LLM Processing
 
-**Версия:** 1.0.0
+**Версия:** 1.2.0
 **Дата:** 2026-01-20
 **Автор:** CTO Office
-**Статус:** v1.0.0 Released – Planning v1.1.0  
+**Статус:** v1.2.0 Released – Config File Support  
 
 ---
 
@@ -40,32 +40,39 @@
 | Потеря контекста | N/A | < 5% при chunking |
 | Adoption | 0 | 10+ пользователей за 3 месяца |
 
-### 1.5 Implementation Status (v1.0.0)
+### 1.5 Implementation Status (v1.2.0)
 
-**Статус:** Production release опубликован на PyPI и GitHub
+**Статус:** v1.2.0 Released - Config File Support
 
 #### Реализовано ✅
 
 | Компонент | Детали |
 |-----------|--------|
-| Domain Layer | Message, Chat, Topic, Participant entities; MessageId, UserId, TopicId, DateRange, FilterSpecification value objects |
+| Domain Layer | Message, Chat, Topic, Participant entities; MessageId, UserId, TopicId, DateRange, FilterSpecification, **ConfigSettings** value objects |
 | Application Layer | ParseChatUseCase, GetStatisticsUseCase, ChunkChatUseCase, GetMentionsUseCase (с поддержкой streaming) |
-| Infrastructure Layer | TelegramJSONReader, TelegramStreamReader (ijson), MarkdownWriter, JSONWriter, KBTemplateWriter, 9 фильтров, SimpleTokenCounter, 3 chunking стратегии |
-| CLI | `parse`, `stats`, `chunk`, `mentions` команды с фильтрами; --streaming/--no-streaming флаги с auto-detection |
-| MCP Server | 6 инструментов: parse_telegram_export, chunk_telegram_export, get_chat_statistics, list_chat_participants, list_chat_topics, list_mentioned_users (все с поддержкой streaming) |
+| Infrastructure Layer | TelegramJSONReader, TelegramStreamReader (ijson), MarkdownWriter, JSONWriter, KBTemplateWriter, CSVWriter, 9 фильтров, TiktokenCounter + SimpleTokenCounter, 3 chunking стратегии, **ConfigLoader, FileConfigReader** |
+| CLI | `parse`, `stats`, `chunk`, `mentions`, `split-topics`, `mcp-config`, **`config`** команды с фильтрами; --streaming/--no-streaming флаги с auto-detection; **global --config option** |
+| MCP Server | 6 инструментов: parse_telegram_export, chunk_telegram_export, get_chat_statistics, list_chat_participants, list_chat_topics, list_mentioned_users (все с поддержкой streaming, CSV format) |
 | Streaming | TelegramStreamReader с ijson, reader factory с auto-detection (>50MB), progress bars в CLI |
-| GitHub & CI/CD | **Репозиторий на GitHub, 4 GitHub Actions workflows (tests, typecheck, lint, publish)** |
-| PyPI | **Пакет опубликован как `tg-parser` v1.0.0** |
-| Тесты | **261 тест** (unit + integration), pyright strict mode, 257/259 passing (99.2%) |
+| **Config Support** | TOML config files, priority-based discovery, `config show/init/path` commands, Pydantic validation |
+| GitHub & CI/CD | Репозиторий на GitHub, 4 GitHub Actions workflows (tests, typecheck, lint, publish) |
+| PyPI | Пакет опубликован как `tg-parser` v1.2.0 |
+| Тесты | **413 тестов** (unit + integration), pyright strict mode, **100% passing** |
+
+#### Новое в v1.1.0 🆕
+
+| Компонент | Детали |
+|-----------|--------|
+| split-topics команда | Отдельная CLI команда для разбиения чатов по топикам |
+| CSV output | CSVWriter для табличного экспорта данных |
+| tiktoken integration | TiktokenCounter с auto-detection (fallback на SimpleTokenCounter) |
+| get_token_counter() | Фабрика для выбора backend токен-счётчика |
 
 #### Не реализовано ❌
 
 | Компонент | Приоритет | Описание |
 |-----------|-----------|----------|
-| split-topics команда | P1 | Отдельная команда разделения по топикам (работает через флаг `--split-topics` в parse) |
-| CSV output | P2 | CSV формат вывода |
-| tiktoken | P2 | Точный подсчёт токенов (есть SimpleTokenCounter) |
-| Config file | P3 | Файл конфигурации |
+| Config file | P3 | TOML файл конфигурации |
 | Anonymization | P3 | Анонимизация участников |
 
 ---

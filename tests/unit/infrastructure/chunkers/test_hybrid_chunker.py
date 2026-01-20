@@ -68,7 +68,10 @@ class TestHybridChunker:
         # Each message ~50 tokens (200 chars / 4 + overhead)
         messages = [
             make_message(
-                id=i, topic_id=10, text="x" * 200, timestamp=datetime(2024, 1, 15, 10, i)
+                id=i,
+                topic_id=10,
+                text="x" * 200,
+                timestamp=datetime(2024, 1, 15, 10, i),
             )
             for i in range(10)
         ]
@@ -88,16 +91,27 @@ class TestHybridChunker:
         chunker = HybridChunker()
         messages = [
             # Small topic
-            make_message(id=1, topic_id=10, text="small", timestamp=datetime(2024, 1, 15, 9, 0)),
+            make_message(
+                id=1, topic_id=10, text="small", timestamp=datetime(2024, 1, 15, 9, 0)
+            ),
             # Large topic
             make_message(
-                id=2, topic_id=20, text="x" * 200, timestamp=datetime(2024, 1, 15, 10, 0)
+                id=2,
+                topic_id=20,
+                text="x" * 200,
+                timestamp=datetime(2024, 1, 15, 10, 0),
             ),
             make_message(
-                id=3, topic_id=20, text="x" * 200, timestamp=datetime(2024, 1, 15, 10, 1)
+                id=3,
+                topic_id=20,
+                text="x" * 200,
+                timestamp=datetime(2024, 1, 15, 10, 1),
             ),
             make_message(
-                id=4, topic_id=20, text="x" * 200, timestamp=datetime(2024, 1, 15, 10, 2)
+                id=4,
+                topic_id=20,
+                text="x" * 200,
+                timestamp=datetime(2024, 1, 15, 10, 2),
             ),
         ]
         chunks_info = chunker.chunk_with_info(messages, max_tokens=150)
@@ -118,7 +132,10 @@ class TestHybridChunker:
         chunker = HybridChunker()
         messages = [
             make_message(
-                id=i, topic_id=10, text="x" * 200, timestamp=datetime(2024, 1, 15, 10, i)
+                id=i,
+                topic_id=10,
+                text="x" * 200,
+                timestamp=datetime(2024, 1, 15, 10, i),
             )
             for i in range(10)
         ]

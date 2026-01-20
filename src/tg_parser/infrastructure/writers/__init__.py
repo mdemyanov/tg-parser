@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from tg_parser.infrastructure.writers.csv_writer import CSVWriter
 from tg_parser.infrastructure.writers.json_writer import JSONWriter
 from tg_parser.infrastructure.writers.kb_template import KBTemplateWriter
 from tg_parser.infrastructure.writers.markdown import MarkdownWriter
@@ -11,10 +12,13 @@ from tg_parser.infrastructure.writers.markdown import MarkdownWriter
 if TYPE_CHECKING:
     from tg_parser.domain.protocols.writer import ChatWriterProtocol
 
-WRITER_REGISTRY: dict[str, type[MarkdownWriter | KBTemplateWriter | JSONWriter]] = {
+WRITER_REGISTRY: dict[
+    str, type[MarkdownWriter | KBTemplateWriter | JSONWriter | CSVWriter]
+] = {
     "markdown": MarkdownWriter,
     "kb": KBTemplateWriter,
     "json": JSONWriter,
+    "csv": CSVWriter,
 }
 
 
@@ -37,4 +41,10 @@ def get_writer(format_name: str, **kwargs: Any) -> ChatWriterProtocol:
     return WRITER_REGISTRY[format_name](**kwargs)
 
 
-__all__ = ["JSONWriter", "KBTemplateWriter", "MarkdownWriter", "get_writer"]
+__all__ = [
+    "CSVWriter",
+    "JSONWriter",
+    "KBTemplateWriter",
+    "MarkdownWriter",
+    "get_writer",
+]

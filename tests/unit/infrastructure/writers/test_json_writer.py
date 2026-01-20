@@ -55,9 +55,7 @@ def sample_chat() -> Chat:
                 author_name="Alice",
                 author_id=UserId("user111"),
                 text="Check this file",
-                attachments=(
-                    Attachment(type="document", file_name="report.pdf"),
-                ),
+                attachments=(Attachment(type="document", file_name="report.pdf"),),
             ),
         ],
         participants={

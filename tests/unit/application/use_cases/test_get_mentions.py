@@ -38,31 +38,23 @@ class TestGetMentionsUseCase:
         assert result.unique_users == 1
         assert result.mentions[0].mention == "alice"
 
-    def test_participant_matching_by_username(
-        self, chat_with_mentions: Chat
-    ) -> None:
+    def test_participant_matching_by_username(self, chat_with_mentions: Chat) -> None:
         """Test that mentions are matched to participants by username."""
         use_case = GetMentionsUseCase()
         result = use_case.execute(chat_with_mentions)
 
-        alice_mention = next(
-            (m for m in result.mentions if m.mention == "alice"), None
-        )
+        alice_mention = next((m for m in result.mentions if m.mention == "alice"), None)
         assert alice_mention is not None
         assert alice_mention.participant_match is not None
         assert alice_mention.participant_match.name == "Alice"
 
-    def test_participant_matching_by_name(
-        self, chat_with_mentions: Chat
-    ) -> None:
+    def test_participant_matching_by_name(self, chat_with_mentions: Chat) -> None:
         """Test partial name matching for mentions."""
         use_case = GetMentionsUseCase()
         result = use_case.execute(chat_with_mentions)
 
         # Check that @bob matches participant with "bob" in name
-        bob_mention = next(
-            (m for m in result.mentions if m.mention == "bob"), None
-        )
+        bob_mention = next((m for m in result.mentions if m.mention == "bob"), None)
         assert bob_mention is not None
         assert bob_mention.participant_match is not None
         assert bob_mention.participant_match.name == "Bob Smith"
@@ -75,9 +67,7 @@ class TestGetMentionsUseCase:
         for m in result.mentions:
             assert m.first_mention <= m.last_mention
 
-    def test_sorted_by_count_descending(
-        self, chat_with_mentions: Chat
-    ) -> None:
+    def test_sorted_by_count_descending(self, chat_with_mentions: Chat) -> None:
         """Test mentions are sorted by count in descending order."""
         use_case = GetMentionsUseCase()
         result = use_case.execute(chat_with_mentions)

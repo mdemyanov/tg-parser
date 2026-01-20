@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timedelta
-from pathlib import Path  # noqa: TC003 - used at runtime in typer argument
+from pathlib import Path
 
 import typer
 from rich.table import Table
@@ -16,7 +16,7 @@ from tg_parser.application.use_cases.get_mentions import (
 from tg_parser.application.use_cases.parse_chat import ParseChatUseCase
 from tg_parser.domain.value_objects.date_range import DateRange
 from tg_parser.domain.value_objects.filter_spec import FilterSpecification
-from tg_parser.presentation.cli.app import app, console
+from tg_parser.presentation.cli.app import app, console, get_config
 
 
 @app.command()
@@ -46,20 +46,27 @@ def mentions(
         "--topics",
         help="Filter by topic names (comma-separated, partial match).",
     ),
-    min_count: int = typer.Option(
-        1,
+    min_count: int | None = typer.Option(
+        None,
         "--min-count",
         "-m",
-        help="Minimum mention count to show.",
+        help="Minimum mention count to show (default: from config).",
     ),
-    output_format: str = typer.Option(
-        "table",
+    output_format: str | None = typer.Option(
+        None,
         "-f",
         "--format",
-        help="Output format: table or json.",
+        help="Output format: table or json (default: from config).",
     ),
 ) -> None:
     """Show mentioned users analysis."""
+    # Resolve defaults from config
+    config = get_config()
+    if min_count is None:
+        min_count = config.mentions.min_count
+    if output_format is None:
+        output_format = config.mentions.output_format
+
     # Build filter spec
     date_range = _build_date_range(date_from, date_to, last_days)
     topic_set = (

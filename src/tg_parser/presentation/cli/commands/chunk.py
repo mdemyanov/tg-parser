@@ -21,7 +21,7 @@ from tg_parser.application.use_cases.chunk_chat import ChunkChatUseCase
 from tg_parser.domain.exceptions import ChunkingError, InvalidExportError
 from tg_parser.infrastructure.readers import get_reader, is_ijson_available
 from tg_parser.infrastructure.writers.markdown import MarkdownWriter
-from tg_parser.presentation.cli.app import app, console
+from tg_parser.presentation.cli.app import app, console, get_config
 
 if TYPE_CHECKING:
     from tg_parser.application.use_cases.chunk_chat import ChunkResult
@@ -60,23 +60,23 @@ def chunk(
         dir_okay=False,
         readable=True,
     ),
-    output: Path = typer.Option(
-        Path("./chunks"),
+    output: Path | None = typer.Option(
+        None,
         "-o",
         "--output",
-        help="Output directory for chunks.",
+        help="Output directory for chunks (default: ./chunks).",
     ),
-    strategy: str = typer.Option(
-        "fixed",
+    strategy: str | None = typer.Option(
+        None,
         "-s",
         "--strategy",
-        help="Chunking strategy: fixed, topic, hybrid.",
+        help="Chunking strategy: fixed, topic, hybrid (default: from config).",
     ),
-    max_tokens: int = typer.Option(
-        8000,
+    max_tokens: int | None = typer.Option(
+        None,
         "-t",
         "--max-tokens",
-        help="Maximum tokens per chunk.",
+        help="Maximum tokens per chunk (default: from config).",
     ),
     single_file: bool = typer.Option(
         False,
@@ -110,6 +110,17 @@ def chunk(
     - hybrid: Split by topic, subdivide large topics by time
     """
     try:
+        # Resolve defaults from config
+        config = get_config()
+        if output is None:
+            output = Path("./chunks")
+        if strategy is None:
+            strategy = config.chunking.strategy
+        if max_tokens is None:
+            max_tokens = config.chunking.max_tokens
+        if not include_extraction_guide:
+            include_extraction_guide = config.output_markdown.include_extraction_guide
+
         # Validate strategy
         valid_strategies = {"fixed", "topic", "hybrid"}
         if strategy not in valid_strategies:
@@ -119,8 +130,10 @@ def chunk(
 
         # Determine if we should use streaming with progress
         file_size_mb = input_path.stat().st_size / (1024 * 1024)
-        use_streaming = streaming if streaming is not None else (
-            file_size_mb > 50 and is_ijson_available()
+        use_streaming = (
+            streaming
+            if streaming is not None
+            else (file_size_mb > 50 and is_ijson_available())
         )
         show_progress = use_streaming and file_size_mb > PROGRESS_THRESHOLD_MB
 

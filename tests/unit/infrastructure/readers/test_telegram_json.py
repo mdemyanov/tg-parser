@@ -24,7 +24,9 @@ class TestTelegramJSONReader:
         # 4 regular messages + 1 service = 5 total (reader doesn't filter)
         assert len(chat.messages) == 5
 
-    def test_read_supergroup_with_topics(self, supergroup_with_topics_path: Path) -> None:
+    def test_read_supergroup_with_topics(
+        self, supergroup_with_topics_path: Path
+    ) -> None:
         """Test reading supergroup with topics."""
         reader = TelegramJSONReader()
         chat = reader.read(supergroup_with_topics_path)
@@ -103,7 +105,7 @@ class TestTextNormalization:
     def test_simple_string(self, tmp_path: Path) -> None:
         """Test normalizing simple string text."""
         file_path = tmp_path / "test.json"
-        file_path.write_text('''{
+        file_path.write_text("""{
             "name": "Test",
             "type": "personal_chat",
             "id": 1,
@@ -111,7 +113,7 @@ class TestTextNormalization:
                 {"id": 1, "type": "message", "date": "2024-01-01T00:00:00",
                  "from": "User", "from_id": "user1", "text": "Simple text"}
             ]
-        }''')
+        }""")
 
         reader = TelegramJSONReader()
         chat = reader.read(file_path)
@@ -120,7 +122,7 @@ class TestTextNormalization:
     def test_array_with_formatting(self, tmp_path: Path) -> None:
         """Test normalizing text array with formatting objects."""
         file_path = tmp_path / "test.json"
-        file_path.write_text('''{
+        file_path.write_text("""{
             "name": "Test",
             "type": "personal_chat",
             "id": 1,
@@ -129,7 +131,7 @@ class TestTextNormalization:
                  "from": "User", "from_id": "user1",
                  "text": ["Normal ", {"type": "bold", "text": "bold"}, " text"]}
             ]
-        }''')
+        }""")
 
         reader = TelegramJSONReader()
         chat = reader.read(file_path)
@@ -138,7 +140,7 @@ class TestTextNormalization:
     def test_empty_text(self, tmp_path: Path) -> None:
         """Test normalizing empty text."""
         file_path = tmp_path / "test.json"
-        file_path.write_text('''{
+        file_path.write_text("""{
             "name": "Test",
             "type": "personal_chat",
             "id": 1,
@@ -146,7 +148,7 @@ class TestTextNormalization:
                 {"id": 1, "type": "message", "date": "2024-01-01T00:00:00",
                  "from": "User", "from_id": "user1", "text": ""}
             ]
-        }''')
+        }""")
 
         reader = TelegramJSONReader()
         chat = reader.read(file_path)

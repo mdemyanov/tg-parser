@@ -129,11 +129,26 @@ class TestCompositeFilter:
             ]
         )
         # Both conditions met
-        assert filter_.matches(make_message(author_name="Alice", timestamp=datetime(2024, 1, 15))) is True
+        assert (
+            filter_.matches(
+                make_message(author_name="Alice", timestamp=datetime(2024, 1, 15))
+            )
+            is True
+        )
         # Only sender matches
-        assert filter_.matches(make_message(author_name="Alice", timestamp=datetime(2023, 1, 15))) is False
+        assert (
+            filter_.matches(
+                make_message(author_name="Alice", timestamp=datetime(2023, 1, 15))
+            )
+            is False
+        )
         # Only date matches
-        assert filter_.matches(make_message(author_name="Bob", timestamp=datetime(2024, 1, 15))) is False
+        assert (
+            filter_.matches(
+                make_message(author_name="Bob", timestamp=datetime(2024, 1, 15))
+            )
+            is False
+        )
 
     def test_empty_filter_passes_all(self) -> None:
         """Test empty composite filter passes all messages."""

@@ -26,9 +26,7 @@ class DateRange:
         """Check if datetime falls within range (inclusive)."""
         if self.start and dt < self.start:
             return False
-        if self.end and dt > self.end:
-            return False
-        return True
+        return not (self.end and dt > self.end)
 
     def is_empty(self) -> bool:
         """Check if no bounds are set (matches everything)."""
