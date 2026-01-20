@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/tg-parser.svg)](https://pypi.org/project/tg-parser/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-261%20passing-green.svg)](https://github.com/mdemyanov/tg-parser)
+[![Tests](https://img.shields.io/badge/tests-343%20passing-green.svg)](https://github.com/mdemyanov/tg-parser)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Type Checked](https://img.shields.io/badge/type%20checked-pyright-blue.svg)](https://github.com/microsoft/pyright)
 
@@ -13,22 +13,23 @@ Transform messy chat exports into clean, structured data ready for summarization
 
 ## Features
 
-### Implemented ✅ (v1.0.0)
+### Implemented ✅ (v1.1.0)
 
 - 🗂️ **All chat types**: Personal, groups, supergroups, forum topics, channels
 - 🔍 **Powerful filtering**: 9 filter types (date, sender, content, topic, attachments, reactions, etc.)
 - ✂️ **Smart chunking**: 3 strategies (fixed, topic, hybrid) for LLM context limits
 - 🚀 **Streaming**: ijson-based reader for files >50MB with auto-detection
-- 📝 **Multiple formats**: Markdown (LLM-optimized), JSON, KB-template with YAML frontmatter
+- 📝 **Multiple formats**: Markdown (LLM-optimized), JSON, KB-template, CSV
 - 🔌 **MCP integration**: 6 tools for Claude Desktop/Code
 - 📊 **Statistics**: Message counts, top senders, topics breakdown, mention analysis
-- ✅ **Type-safe**: pyright strict mode, 261 comprehensive tests
+- 🎯 **tiktoken integration**: Accurate token counting (with SimpleTokenCounter fallback)
+- 🆕 **split-topics command**: Split forum chats by topic into separate files
+- ✅ **Type-safe**: pyright strict mode, 343 comprehensive tests
+- 🆕 **mcp-config command**: Auto-configure Claude Desktop/Code MCP integration
 
 ### Coming Soon 🚧
 
-- 📄 **CSV export**: Tabular output format (P2)
 - 🔧 **Config files**: TOML configuration support (P3)
-- 🎯 **tiktoken**: Accurate token counting (P2)
 
 ## Installation
 
@@ -177,7 +178,12 @@ Use tg-parser directly in Claude Desktop or Claude Code.
 
 ### Setup
 
-Add to `claude_desktop_config.json`:
+```bash
+# Auto-configure (recommended)
+tg-parser mcp-config --apply
+
+# Or manually add to claude_desktop_config.json:
+```
 
 ```json
 {
@@ -188,6 +194,37 @@ Add to `claude_desktop_config.json`:
     }
   }
 }
+```
+
+### `tg-parser mcp-config`
+
+Generate or apply MCP configuration for Claude Desktop/Code.
+
+```bash
+tg-parser mcp-config [OPTIONS]
+
+# Print config to stdout (default)
+tg-parser mcp-config
+
+# Apply to Claude Desktop config
+tg-parser mcp-config --apply
+
+# Dry run - show what would be applied
+tg-parser mcp-config --apply --dry-run
+
+# Apply to Claude Code instead
+tg-parser mcp-config --apply --target code
+
+# Use 'uv run' instead of 'uvx'
+tg-parser mcp-config --use-uv-run
+
+Options:
+  --apply               Apply config to Claude config file
+  --dry-run             Show what would be written without applying
+  --no-backup           Skip creating backup before modifying
+  --target [desktop|code]  Target application (default: desktop)
+  --use-uv-run          Use 'uv run' instead of 'uvx' for non-venv installs
+  -v, --verbose         Verbose output
 ```
 
 ### Available Tools

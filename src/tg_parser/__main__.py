@@ -9,7 +9,7 @@ def main() -> None:
     """Main entry point for tg-parser."""
     # Check for MCP mode
     if len(sys.argv) > 1 and sys.argv[1] == "mcp":
-        # Import and run MCP server
+        # Import and run MCP server (conditional import by design)
         try:
             from tg_parser.presentation.mcp.server import (
                 run_mcp_server,  # type: ignore[import-not-found]
@@ -20,10 +20,12 @@ def main() -> None:
             print("MCP support not installed. Install with: uv add tg-parser[mcp]")
             sys.exit(1)
     else:
-        # Run CLI
-        # Import commands to register them (side effect: registers with app)
+        # Run CLI - Import commands to register them with app
         import tg_parser.presentation.cli.commands.chunk
+        import tg_parser.presentation.cli.commands.mcp_config
+        import tg_parser.presentation.cli.commands.mentions
         import tg_parser.presentation.cli.commands.parse
+        import tg_parser.presentation.cli.commands.split_topics
         import tg_parser.presentation.cli.commands.stats  # noqa: F401
         from tg_parser.presentation.cli.app import app
 

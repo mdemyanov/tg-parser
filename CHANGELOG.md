@@ -7,11 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned for v1.1.0
-- CSV output format
-- Separate `split-topics` command (currently works via `--split-topics` flag)
-- tiktoken integration for accurate token counting
+### Planned for v1.2.0
 - TOML configuration file support
+
+## [1.1.0] - 2026-01-20
+
+### Added
+- **CSV output format**: New `CSVWriter` for tabular data export (`-f csv`)
+- **split-topics command**: Standalone CLI command for splitting chats by topic
+- **tiktoken integration**: Accurate token counting with `TiktokenCounter`
+  - Auto-detection: uses tiktoken if available, falls back to SimpleTokenCounter
+  - Factory function `get_token_counter()` for backend selection
+- **mcp-config command**: Auto-configure Claude Desktop/Code MCP integration
+  - Automatic venv detection (uses venv Python or uvx)
+  - Support for Claude Desktop and Claude Code targets
+  - Dry-run mode and backup creation
+  - Platform-aware config path detection (macOS, Windows, Linux)
+- 82 new tests for split-topics, CSV writer, tiktoken, and mcp-config (total: 343 tests)
+
+### Changed
+- All writers and use-cases now use `get_token_counter()` factory
+- Ruff configuration updated to ignore intentional patterns (PLC0415, TC001, TC003)
+- Fixed 2 flaky tests in `TestExtractionGuideFlag` (Rich console truncation)
+
+### Documentation
+- Updated README.md with v1.1.0 features
+- Updated CLAUDE.md Quick Status section
+- Incremented version to 1.1.0 in all files
 
 ## [1.0.0] - 2026-01-19
 
@@ -130,13 +152,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History Summary
 
+- **v1.1.0** (2026-01-20): CSV export, split-topics, tiktoken, mcp-config, 343 tests
+- **v1.0.0** (2026-01-19): GitHub publication, PyPI release, CI/CD
 - **v0.3.0** (2025-01-19): Streaming support for large files, 261 tests
 - **v0.2.5** (2025-01-10): Advanced filtering, JSON/KB-template writers
 - **v0.2.0** (2025-01-05): Chunking strategies, split-topics support
 - **v0.1.0** (2024-12-20): MVP with CLI, MCP server, core parsing
 - **v0.0.1** (2024-12-01): Initial prototype
 
-[Unreleased]: https://github.com/mdemyanov/tg-parser/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/mdemyanov/tg-parser/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/mdemyanov/tg-parser/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/mdemyanov/tg-parser/compare/v0.3.0...v1.0.0
 [0.3.0]: https://github.com/mdemyanov/tg-parser/compare/v0.2.5...v0.3.0
 [0.2.5]: https://github.com/mdemyanov/tg-parser/compare/v0.2.0...v0.2.5

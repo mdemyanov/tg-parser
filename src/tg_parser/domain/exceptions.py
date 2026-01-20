@@ -41,3 +41,12 @@ class StreamingError(TgParserError):
         self.path = path
         self.reason = reason
         super().__init__(f"Streaming error at {path}: {reason}")
+
+
+class ConfigError(TgParserError):
+    """Raised when configuration operation fails."""
+
+    def __init__(self, operation: str, reason: str) -> None:
+        self.operation = operation
+        self.reason = reason
+        super().__init__(f"Config {operation} failed: {reason}")
